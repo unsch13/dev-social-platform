@@ -189,7 +189,10 @@
     </div>
 
     <script>
-        const API_BASE = 'http://localhost:5000/api';
+        // Use environment variable for production, fallback to localhost for development
+        const API_BASE = window.location.hostname === 'localhost' 
+            ? 'http://localhost:5000/api' 
+            : 'https://dev-social-backend.onrender.com/api';
         
         function showResult(message, type = 'info') {
             const resultsDiv = document.getElementById('test-results');
@@ -206,7 +209,10 @@
 
         async function testServer() {
             try {
-                const response = await fetch('http://localhost:5000');
+                const serverUrl = window.location.hostname === 'localhost' 
+                    ? 'http://localhost:5000' 
+                    : 'https://dev-social-backend.onrender.com';
+                const response = await fetch(serverUrl);
                 const data = await response.text();
                 showResult('Server is running! Response: ' + data.substring(0, 100) + '...', 'success');
             } catch (error) {
