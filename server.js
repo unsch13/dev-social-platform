@@ -19,19 +19,10 @@ const io = new Server(server, {
 // Security middleware
 app.use(helmet());
 app.use(cors({
-  origin: [
-    "http://localhost:3000",
-    "http://localhost:3001", 
-    "http://127.0.0.1:3001",
-    "file://",
-    "https://dev-social-platform.vercel.app",
-    "https://dev-social-platform-1.vercel.app",
-    "https://dev-social-platform.onrender.com",
-    "https://dev-social-platform-1.onrender.com"
-  ],
+  origin: true, // Allow all origins for now
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
 }));
 
 // Rate limiting
@@ -63,6 +54,11 @@ app.use('/api/comments', require('./routes/comments'));
 app.use('/api/notifications', require('./routes/notifications'));
 app.use('/api/messages', require('./routes/messages'));
 app.use('/api/analytics', require('./routes/analytics'));
+
+// Debug route
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'Backend is working!', timestamp: new Date().toISOString() });
+});
 
 // Socket.IO connection handling
 io.on('connection', (socket) => {
