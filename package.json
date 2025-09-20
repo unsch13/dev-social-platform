@@ -9,7 +9,7 @@
     "test": "jest",
     "client": "cd client && npm start",
     "server": "nodemon server.js",
-    "build": "echo 'Static build - no build step needed'",
+    "build": "react-scripts build",
     "heroku-postbuild": "npm install && cd client && npm install && npm run build"
   },
   "keywords": [
@@ -34,11 +34,32 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.8.7",
     "multer": "^1.4.5-lts.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-scripts": "^5.0.1",
     "socket.io": "^4.8.1"
   },
   "devDependencies": {
     "jest": "^29.6.4",
     "nodemon": "^3.0.1",
     "supertest": "^6.3.3"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

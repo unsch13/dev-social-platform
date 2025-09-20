@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevSocial - Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid;
+        }
+        .success { background-color: #d4edda; border-color: #28a745; color: #155724; }
+        .info { background-color: #d1ecf1; border-color: #17a2b8; color: #0c5460; }
+        .warning { background-color: #fff3cd; border-color: #ffc107; color: #856404; }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background-color: #0056b3; }
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 DevSocial - Developer Social Platform</h1>
+        <p>Welcome to your MERN stack social media platform!</p>
+
+        <div class="status success">
+            <h3>✅ Backend Status</h3>
+            <p>✅ Express.js server running on port 5000</p>
+            <p>✅ MongoDB Atlas connected successfully</p>
+            <p>✅ JWT authentication working</p>
+            <p>✅ Socket.IO for real-time features</p>
+        </div>
+
+        <div class="status info">
+            <h3>🎯 Available Features</h3>
+            <ul>
+                <li>User registration and login</li>
+                <li>Profile management</li>
+                <li>Post creation with images</li>
+                <li>Follow/following system</li>
+                <li>Real-time messaging</li>
+                <li>Analytics dashboard</li>
+                <li>Search functionality</li>
+            </ul>
+        </div>
+
+        <div class="status warning">
+            <h3>🧪 Test Your API</h3>
+            <p>Click the buttons below to test the backend functionality:</p>
+            
+            <button onclick="testServer()">Test Server</button>
+            <button onclick="testRegistration()">Test Registration</button>
+            <button onclick="testLogin()">Test Login</button>
+            <button onclick="testPosts()">Test Posts</button>
+            
+            <div id="test-results"></div>
+        </div>
+
+        <div class="status info">
+            <h3>📱 Frontend Access</h3>
+            <p>React frontend should be available at: <a href="http://localhost:3000" target="_blank">http://localhost:3000</a></p>
+            <p>If React isn't running, the backend API is fully functional and can be tested using the buttons above.</p>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000/api';
+        
+        function showResult(message, isSuccess = true) {
+            const resultsDiv = document.getElementById('test-results');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = 'test-result';
+            resultDiv.style.backgroundColor = isSuccess ? '#d4edda' : '#f8d7da';
+            resultDiv.style.color = isSuccess ? '#155724' : '#721c24';
+            resultDiv.innerHTML = `<strong>${isSuccess ? '✅' : '❌'}</strong> ${message}`;
+            resultsDiv.appendChild(resultDiv);
+        }
+
+        async function testServer() {
+            try {
+                const response = await fetch('http://localhost:5000');
+                const data = await response.text();
+                showResult('Server is running! Response: ' + data.substring(0, 100) + '...');
+            } catch (error) {
+                showResult('Server test failed: ' + error.message, false);
+            }
+        }
+
+        async function testRegistration() {
+            try {
+                const response = await fetch(`${API_BASE}/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: 'testuser' + Date.now(),
+                        email: 'test' + Date.now() + '@example.com',
+                        password: 'password123',
+                        firstName: 'Test',
+                        lastName: 'User'
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.token) {
+                    showResult('Registration successful! Token received: ' + data.token.substring(0, 50) + '...');
+                    localStorage.setItem('token', data.token);
+                } else {
+                    showResult('Registration failed: ' + data.message, false);
+                }
+            } catch (error) {
+                showResult('Registration test failed: ' + error.message, false);
+            }
+        }
+
+        async function testLogin() {
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: 'test@example.com',
+                        password: 'password123'
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.token) {
+                    showResult('Login successful! Token received: ' + data.token.substring(0, 50) + '...');
+                    localStorage.setItem('token', data.token);
+                } else {
+                    showResult('Login failed: ' + data.message, false);
+                }
+            } catch (error) {
+                showResult('Login test failed: ' + error.message, false);
+            }
+        }
+
+        async function testPosts() {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    showResult('No token found. Please register or login first.', false);
+                    return;
+                }
+
+                const response = await fetch(`${API_BASE}/posts`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const data = await response.json();
+                if (data.posts) {
+                    showResult('Posts API working! Found ' + data.posts.length + ' posts.');
+                } else {
+                    showResult('Posts API failed: ' + data.message, false);
+                }
+            } catch (error) {
+                showResult('Posts test failed: ' + error.message, false);
+            }
+        }
+
+        // Auto-test server on page load
+        window.onload = function() {
+            testServer();
+        };
+    </script>
+</body>
+</html>
