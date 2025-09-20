@@ -46,6 +46,11 @@ mongoose.connect(mongoUri, {
 .then(() => console.log('MongoDB connected successfully'))
 .catch(err => console.error('MongoDB connection error:', err));
 
+// Debug route (must be before 404 handler)
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'Backend is working!', timestamp: new Date().toISOString() });
+});
+
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/users', require('./routes/users'));
@@ -54,11 +59,6 @@ app.use('/api/comments', require('./routes/comments'));
 app.use('/api/notifications', require('./routes/notifications'));
 app.use('/api/messages', require('./routes/messages'));
 app.use('/api/analytics', require('./routes/analytics'));
-
-// Debug route
-app.get('/api/test', (req, res) => {
-  res.json({ message: 'Backend is working!', timestamp: new Date().toISOString() });
-});
 
 // Socket.IO connection handling
 io.on('connection', (socket) => {
