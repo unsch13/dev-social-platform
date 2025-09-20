@@ -7,6 +7,12 @@ const { createServer } = require('http');
 const { Server } = require('socket.io');
 require('dotenv').config();
 
+// Set default JWT secret if not provided
+if (!process.env.JWT_SECRET) {
+  process.env.JWT_SECRET = 'dev-social-platform-secret-key-2024';
+  console.log('Using default JWT secret');
+}
+
 const app = express();
 const server = createServer(app);
 const io = new Server(server, {
